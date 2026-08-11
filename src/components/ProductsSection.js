@@ -52,6 +52,7 @@ function ProductCard({ product }) {
               fill
               sizes="(max-width: 768px) 88vw, (max-width: 1024px) 44vw, 30vw"
               className="object-cover object-top"
+              loading="eager"
             />
           </div>
         </div>
