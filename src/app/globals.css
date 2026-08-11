@@ -1,0 +1,689 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --font-sans:
+    var(--font-inter), ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+    Arial, sans-serif;
+
+  --color-brand: #4f7cff;
+  --color-brand-hover: #3d68e8;
+  --color-brand-deep: #2545c8;
+  --color-accent: #6ee7b7;
+  --color-ink: #06080f;
+  --color-ink-soft: #0b1120;
+}
+
+:root {
+  --cs-header-h: 6rem;
+}
+
+/* Reserve the scrollbar track at all times. Without this, locking scroll for a
+   modal removes the scrollbar, the viewport widens, and the whole page (plus the
+   fixed navbar) jumps sideways. */
+html,
+body {
+  scrollbar-gutter: stable;
+}
+
+/* thin, dark-theme scrollbar so the reserved track is unobtrusive */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 172, 255, 0.28) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(140, 172, 255, 0.26);
+  border: 3px solid transparent;
+  border-radius: 9999px;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(160, 190, 255, 0.45);
+  background-clip: content-box;
+}
+
+/* hero runs the full viewport, tucked up under the floating island */
+.cs-hero-full {
+  display: flex;
+  align-items: center;
+  margin-top: calc(-1 * var(--cs-header-h));
+  padding-top: var(--cs-header-h);
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* Services band: starts on the exact page ink so it flows out of the brand
+   line, deepens into navy through the middle, then falls back to that same ink
+   at the bottom so the products section below continues off it seamlessly. */
+.cs-services-bg {
+  background: linear-gradient(
+    180deg,
+    #06080f 0%,
+    #080c1c 20%,
+    #0a1229 42%,
+    #0d1a3a 62%,
+    #0a1128 80%,
+    #070a16 92%,
+    #06080f 100%
+  );
+}
+
+/* ---------- Glass surfaces ---------- */
+
+.cs-glass {
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.075) 0%,
+    rgba(255, 255, 255, 0.025) 55%,
+    rgba(255, 255, 255, 0.015) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow:
+    0 24px 48px -28px rgba(0, 0, 0, 0.95),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07);
+}
+
+/* floating "dynamic island" navbar.
+   The tint is kept light and close to the page ink so the glass takes its
+   colour from whatever scrolls under it, instead of sitting there as a blue slab. */
+.cs-island {
+  position: relative;
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.09) 0%,
+      rgba(255, 255, 255, 0.025) 52%,
+      rgba(255, 255, 255, 0.008) 100%
+    ),
+    linear-gradient(160deg, rgba(16, 24, 52, 0.4) 0%, rgba(8, 12, 32, 0.48) 100%);
+  backdrop-filter: blur(30px) saturate(200%) brightness(1.05);
+  -webkit-backdrop-filter: blur(30px) saturate(200%) brightness(1.05);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow:
+    /* bright top edge and dim bottom edge read as thickness */
+    inset 0 1px 0 rgba(255, 255, 255, 0.24),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28),
+    /* faint blue light caught inside the pane */
+    inset 0 0 28px rgba(79, 124, 255, 0.09),
+    0 24px 48px -24px rgba(2, 6, 24, 0.85);
+}
+
+/* firms up once content scrolls beneath it, so labels stay readable */
+.cs-island-solid {
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.03) 52%,
+      rgba(255, 255, 255, 0.01) 100%
+    ),
+    linear-gradient(160deg, rgba(14, 21, 48, 0.62) 0%, rgba(7, 11, 28, 0.7) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.26),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.32),
+    inset 0 0 28px rgba(79, 124, 255, 0.11),
+    0 28px 56px -26px rgba(2, 6, 24, 0.92);
+}
+
+/* gloss: a highlight pooling along the top, plus a diagonal specular streak */
+.cs-island::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, transparent 58%),
+    linear-gradient(104deg, transparent 14%, rgba(255, 255, 255, 0.07) 38%, transparent 58%);
+}
+
+/* opaque fallback where backdrop-filter is unsupported */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .cs-island {
+    background: rgba(11, 17, 38, 0.96);
+  }
+}
+
+.cs-inset {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ---------- Hero background ---------- */
+
+/* square mesh, slowly drifting across the hero */
+.cs-mesh {
+  position: absolute;
+  inset: -30%;
+  background-image:
+    linear-gradient(rgba(120, 158, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(120, 158, 255, 0.16) 1px, transparent 1px);
+  background-size: 72px 72px;
+  /* anchored to the centre so a line intersection sits exactly at 50%/50% —
+     the travelling pulses below are offset in multiples of the 72px cell and
+     therefore ride precisely on top of the lines */
+  background-position: 50% 50%;
+  mask-image: radial-gradient(62% 62% at 52% 48%, #000 0%, transparent 82%);
+  -webkit-mask-image: radial-gradient(62% 62% at 52% 48%, #000 0%, transparent 82%);
+}
+
+/* ---------- Current running along the grid, inward to the centre ----------
+
+   This is the SAME grid, drawn bright, revealed only through a ring-shaped
+   mask. Shrinking the mask sweeps the lit band inward, so the existing lines
+   light up in place rather than any new shape moving across them. Geometry is
+   identical to .cs-mesh (inset, 72px cell, centred) so the lines coincide. */
+
+.cs-mesh-current {
+  position: absolute;
+  inset: -30%;
+  background-image:
+    linear-gradient(rgba(150, 182, 255, 0.42) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(150, 182, 255, 0.42) 1px, transparent 1px);
+  background-size: 72px 72px;
+  background-position: 50% 50%;
+  mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent 0 40%,
+    rgba(0, 0, 0, 0.35) 46%,
+    #000 52%,
+    #000 57%,
+    rgba(0, 0, 0, 0.3) 63%,
+    transparent 72%
+  );
+  -webkit-mask-image: radial-gradient(
+    circle at 50% 50%,
+    transparent 0 40%,
+    rgba(0, 0, 0, 0.35) 46%,
+    #000 52%,
+    #000 57%,
+    rgba(0, 0, 0, 0.3) 63%,
+    transparent 72%
+  );
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  mask-position: 50% 50%;
+  -webkit-mask-position: 50% 50%;
+  will-change: mask-size;
+  animation: cs-current 7s linear infinite;
+}
+
+/* a second sweep, half a cycle behind, so the current never fully stops */
+.cs-mesh-current-b {
+  animation-delay: 3.5s;
+}
+
+@keyframes cs-current {
+  0% {
+    mask-size: 260% 260%;
+    -webkit-mask-size: 260% 260%;
+    opacity: 0;
+  }
+  14% {
+    opacity: 0.33;
+  }
+  82% {
+    opacity: 0.18;
+  }
+  100% {
+    mask-size: 0% 0%;
+    -webkit-mask-size: 0% 0%;
+    opacity: 0;
+  }
+}
+
+
+/* soft ambient glow, weighted behind the floating cards */
+.cs-glow {
+  background:
+    radial-gradient(760px 620px at 74% 40%, rgba(79, 124, 255, 0.34), transparent 68%),
+    radial-gradient(620px 520px at 96% 78%, rgba(37, 69, 200, 0.28), transparent 72%),
+    radial-gradient(700px 420px at 6% 12%, rgba(59, 96, 220, 0.14), transparent 74%);
+  animation: cs-breathe 14s ease-in-out infinite;
+}
+
+@keyframes cs-breathe {
+  0%,
+  100% {
+    opacity: 0.85;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+/* free-floating light orbs */
+.cs-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(64px);
+  will-change: transform;
+}
+
+.cs-orb-a {
+  animation: cs-orb-a 26s ease-in-out infinite;
+}
+
+.cs-orb-b {
+  animation: cs-orb-b 34s ease-in-out infinite;
+}
+
+@keyframes cs-orb-a {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(70px, -46px, 0) scale(1.12);
+  }
+}
+
+@keyframes cs-orb-b {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1.08);
+  }
+  50% {
+    transform: translate3d(-58px, 54px, 0) scale(1);
+  }
+}
+
+/* twinkling specks */
+.cs-spark {
+  position: absolute;
+  border-radius: 9999px;
+  background: #cfe0ff;
+  box-shadow: 0 0 8px 1px rgba(160, 195, 255, 0.85);
+  opacity: 0;
+  animation: cs-twinkle 6s ease-in-out infinite;
+}
+
+@keyframes cs-twinkle {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  70% {
+    opacity: 0.25;
+    transform: scale(0.85);
+  }
+}
+
+/* tilted floating glass panel used by the hero collage */
+.cs-panel {
+  background:
+    /* lit top-left corner */
+    radial-gradient(125% 115% at 0% 0%, rgba(58, 92, 196, 0.6) 0%, transparent 56%),
+    /* softer bloom off the bottom-left edge */
+    radial-gradient(95% 85% at 4% 100%, rgba(44, 74, 170, 0.42) 0%, transparent 62%),
+    /* deep navy body falling away to indigo */
+    linear-gradient(
+      152deg,
+      rgba(30, 43, 110, 0.9) 0%,
+      rgba(20, 27, 76, 0.93) 46%,
+      rgba(12, 15, 48, 0.94) 100%
+    );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(18px) saturate(130%);
+  -webkit-backdrop-filter: blur(18px) saturate(130%);
+  box-shadow:
+    0 48px 90px -30px rgba(2, 5, 24, 0.98),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06);
+}
+
+.cs-panel-row {
+  background: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+/* ---------- Services board: two panels opened like a book ---------- */
+
+.cs-book {
+  perspective: 2000px;
+  perspective-origin: 50% 45%;
+}
+
+/* outer edges rotate away, spine edge stays forward.
+
+   backdrop-filter is switched off on the tilted panels: at ~92% body opacity it
+   is imperceptible here, and dropping it keeps these from being promoted to
+   composited layers under the `perspective` ancestor. Interactive controls that
+   must be pixel-accurate are rendered outside the tilt — see ServicesBoard. */
+.cs-book-l,
+.cs-book-r {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.cs-book-l {
+  transform: rotateY(-7deg);
+  transform-origin: right center;
+}
+
+.cs-book-r {
+  transform: rotateY(7deg);
+  transform-origin: left center;
+}
+
+@media (max-width: 1023px) {
+  .cs-book-l,
+  .cs-book-r {
+    transform: none;
+  }
+}
+
+/* halo bloom sitting behind a panel: a broad blue wash with a brighter,
+   near-white core so the panel edges read as lit rather than just tinted */
+.cs-panel-halo {
+  background:
+    radial-gradient(52% 42% at 50% 42%, rgba(190, 214, 255, 0.34), transparent 70%),
+    radial-gradient(72% 62% at 50% 45%, rgba(79, 124, 255, 0.62), transparent 74%),
+    radial-gradient(95% 85% at 50% 55%, rgba(37, 69, 200, 0.4), transparent 78%);
+  filter: blur(58px);
+  animation: cs-halo-breathe 11s ease-in-out infinite;
+}
+
+@keyframes cs-halo-breathe {
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: scale(0.98);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-panel-halo {
+    animation: none;
+  }
+}
+
+/* list ⇄ grid swap */
+.cs-view-swap {
+  animation: cs-view-swap 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cs-view-swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-view-swap {
+    animation: none;
+  }
+}
+
+/* glass filter tabs inside a panel */
+.cs-tab {
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.11) 0%,
+    rgba(255, 255, 255, 0.045) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.cs-tab:hover {
+  background: linear-gradient(
+    140deg,
+    rgba(255, 255, 255, 0.17) 0%,
+    rgba(255, 255, 255, 0.08) 100%
+  );
+  border-color: rgba(170, 198, 255, 0.4);
+}
+
+.cs-tab-active {
+  background: linear-gradient(
+    140deg,
+    rgba(150, 180, 255, 0.42) 0%,
+    rgba(79, 124, 255, 0.32) 100%
+  );
+  border-color: rgba(190, 212, 255, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 8px 20px -10px rgba(79, 124, 255, 0.8);
+}
+
+/* full-glass row inside a panel */
+.cs-listrow {
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.06) 45%,
+    rgba(255, 255, 255, 0.035) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 12px 26px -18px rgba(0, 0, 0, 0.9);
+}
+
+.cs-listrow:hover {
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.19) 0%,
+    rgba(255, 255, 255, 0.1) 45%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  border-color: rgba(160, 190, 255, 0.42);
+}
+
+/* ---------- Products section ---------- */
+
+/* section fills the viewport and sits on the page ink, so it reads as a
+   continuation of the services band's bottom edge rather than a new slab */
+.cs-products {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* One central bloom only. Corner glows are deliberately absent: the top-right
+   one reached the section's top edge, where it met the services band's navy
+   tail and drew a visible seam between the two sections. */
+.cs-products-glow {
+  background: radial-gradient(900px 520px at 50% 46%, rgba(79, 124, 255, 0.2), transparent 70%);
+}
+
+.cs-product-card {
+  position: relative;
+  background: linear-gradient(
+    160deg,
+    rgba(255, 255, 255, 0.085) 0%,
+    rgba(255, 255, 255, 0.03) 52%,
+    rgba(255, 255, 255, 0.018) 100%
+  );
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 30px 60px -34px rgba(2, 6, 24, 0.95);
+  transition:
+    transform 400ms cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 400ms ease,
+    box-shadow 400ms ease;
+}
+
+.cs-product-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(150, 182, 255, 0.42);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 40px 80px -34px rgba(79, 124, 255, 0.55);
+}
+
+/* thin lit seam along the top edge, brightest in the middle */
+.cs-product-card::before {
+  content: '';
+  position: absolute;
+  inset: 0 12% auto;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(170, 200, 255, 0.55),
+    transparent
+  );
+  opacity: 0.7;
+  transition: opacity 400ms ease;
+}
+
+.cs-product-card:hover::before {
+  opacity: 1;
+}
+
+/* ---------- Product card media: screenshot behind, laptop render in front ---------- */
+
+/* the screenshot sits inside the card, so it reads as its own framed surface */
+.cs-product-shot {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09),
+    0 18px 36px -24px rgba(2, 6, 24, 0.9);
+}
+
+/* transparent PNG, so the shadow has to follow the laptop's silhouette */
+.cs-product-laptop {
+  height: auto;
+  filter: drop-shadow(0 18px 22px rgba(2, 6, 24, 0.65));
+  transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cs-product-card:hover .cs-product-laptop {
+  transform: scale(1.045);
+}
+
+/* the middle card sits slightly proud of its neighbours on wide screens */
+@media (min-width: 1024px) {
+  .cs-product-card-featured {
+    transform: translateY(-14px);
+  }
+
+  .cs-product-card-featured:hover {
+    transform: translateY(-22px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-product-card,
+  .cs-product-card:hover,
+  .cs-product-card-featured,
+  .cs-product-card-featured:hover,
+  .cs-product-card:hover .cs-product-laptop {
+    transform: none;
+  }
+}
+
+/* ---------- Service modal: expands out of the row it was opened from ---------- */
+
+.cs-modal-panel {
+  transform-origin: center center;
+  will-change: transform, opacity;
+}
+
+/* body content settles in just behind the panel growth */
+.cs-modal-body > * {
+  animation: cs-modal-rise 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cs-modal-body > *:nth-child(1) { animation-delay: 90ms; }
+.cs-modal-body > *:nth-child(2) { animation-delay: 140ms; }
+.cs-modal-body > *:nth-child(3) { animation-delay: 190ms; }
+
+@keyframes cs-modal-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-modal-panel {
+    transform: none !important;
+    transition: opacity 150ms linear !important;
+  }
+
+  .cs-modal-body > * {
+    animation: none;
+  }
+}
+
+/* dark inner "screen" inside a glass panel — editors, charts, consoles */
+.cs-screen {
+  background: linear-gradient(180deg, rgba(4, 7, 22, 0.96), rgba(2, 4, 14, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+/* shared 3D tilt for the hero cards */
+.cs-tilt {
+  transform: perspective(1500px) rotateX(7deg) rotateY(-20deg) rotateZ(-5deg);
+}
+
+@keyframes cs-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.cs-float {
+  animation: cs-float 7s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cs-float,
+  .cs-mesh-current,
+  .cs-mesh,
+  .cs-glow,
+  .cs-orb-a,
+  .cs-orb-b {
+    animation: none;
+  }
+
+  .cs-spark {
+    animation: none;
+    opacity: 0.55;
+  }
+}
