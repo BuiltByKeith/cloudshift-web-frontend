@@ -1,76 +1,7 @@
-/* Placeholder content. Shaped like the WordPress REST response (title.rendered,
-   excerpt.rendered, date) so switching back to getPosts() is a one-line change
-   once the API is reachable from the deployed environment. */
-const POSTS = [
-  {
-    id: 1,
-    date: '2026-07-28',
-    category: 'Cloud',
-    readingTime: '6 min read',
-    title: { rendered: 'Planning a migration that does not stall halfway' },
-    excerpt: {
-      rendered:
-        '<p>Most cloud migrations do not fail on the technology. They stall on the parts nobody scoped: data ownership, licence terms, and the one legacy service everything quietly depends on.</p>',
-    },
-  },
-  {
-    id: 2,
-    date: '2026-07-14',
-    category: 'Security',
-    readingTime: '5 min read',
-    title: { rendered: 'Backups you have never restored are not backups' },
-    excerpt: {
-      rendered:
-        '<p>A restore drill costs an afternoon. Finding out your snapshots were incomplete during an actual incident costs considerably more than that.</p>',
-    },
-  },
-  {
-    id: 3,
-    date: '2026-06-30',
-    category: 'Automation',
-    readingTime: '4 min read',
-    title: { rendered: 'Where workflow automation actually pays for itself' },
-    excerpt: {
-      rendered:
-        '<p>Automating a broken process just makes it fail faster. Map the handoffs first, cut the steps that exist only out of habit, then automate what is left.</p>',
-    },
-  },
-  {
-    id: 4,
-    date: '2026-06-11',
-    category: 'Engineering',
-    readingTime: '7 min read',
-    title: { rendered: 'Choosing between managed services and running it yourself' },
-    excerpt: {
-      rendered:
-        '<p>Managed services trade money for attention. That is usually a good trade, right up until the moment the service stops fitting how your team works.</p>',
-    },
-  },
-  {
-    id: 5,
-    date: '2026-05-22',
-    category: 'Workplace',
-    readingTime: '5 min read',
-    title: { rendered: 'What a good onboarding week looks like for a new engineer' },
-    excerpt: {
-      rendered:
-        '<p>Ship something small on day two. Nothing builds context faster than following one change all the way through to production.</p>',
-    },
-  },
-  {
-    id: 6,
-    date: '2026-05-05',
-    category: 'Cloud',
-    readingTime: '6 min read',
-    title: { rendered: 'Cutting cloud spend without cutting capability' },
-    excerpt: {
-      rendered:
-        '<p>The savings are rarely in the compute line. They are in the idle environments, the oversized storage tiers, and the egress nobody has looked at in a year.</p>',
-    },
-  },
-];
+import { getPosts } from '@/lib/wp';
 
 function formatDate(iso) {
+  if (!iso) return null;
   return new Date(iso).toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -78,7 +9,9 @@ function formatDate(iso) {
   });
 }
 
-export default function Blogs() {
+export default async function Blogs() {
+  const posts = await getPosts();
+
   return (
     <main className="mx-auto max-w-6xl px-6 pt-16 pb-24">
       <div className="text-center">
@@ -91,15 +24,19 @@ export default function Blogs() {
       </div>
 
       <div className="mt-12 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
-        {POSTS.map((post) => (
+        {posts.map((post) => (
           <article
             key={post.id}
             className="cs-glass flex flex-col rounded-2xl p-6 transition-colors duration-300 hover:border-[#7fa5ff]/40"
           >
+            {/* category and reading time only exist on the stand-in content —
+                a live WordPress post simply renders the date on its own */}
             <div className="flex items-center gap-2.5 text-[12px] text-white/45">
-              <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-[#a9c6ff]">
-                {post.category}
-              </span>
+              {post.category && (
+                <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-[#a9c6ff]">
+                  {post.category}
+                </span>
+              )}
               <span>{formatDate(post.date)}</span>
             </div>
 
@@ -114,7 +51,9 @@ export default function Blogs() {
 
             <div className="mt-6 flex-1" />
 
-            <span className="text-[12.5px] text-white/45">{post.readingTime}</span>
+            {post.readingTime && (
+              <span className="text-[12.5px] text-white/45">{post.readingTime}</span>
+            )}
           </article>
         ))}
       </div>
