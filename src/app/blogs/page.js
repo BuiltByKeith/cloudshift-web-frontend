@@ -1,3 +1,4 @@
+import { decode, readingTime } from '@/lib/html';
 import { getPosts } from '@/lib/wp';
 
 function formatDate(iso) {
@@ -7,6 +8,16 @@ function formatDate(iso) {
     day: 'numeric',
     year: 'numeric',
   });
+}
+
+/* posts are requested with _embed, so the assigned terms come back inline —
+   wp:term is an array of arrays, one per taxonomy */
+function primaryCategory(post) {
+  if (post.category) return post.category;
+  const groups = post._embedded?.['wp:term'] || [];
+  const term = groups.flat().find((t) => t?.taxonomy === 'category');
+  if (!term || term.slug === 'uncategorized') return null;
+  return decode(term.name);
 }
 
 export default async function Blogs() {
@@ -23,40 +34,45 @@ export default async function Blogs() {
         </p>
       </div>
 
-      <div className="mt-12 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
-        {posts.map((post) => (
-          <article
-            key={post.id}
-            className="cs-glass flex flex-col rounded-2xl p-6 transition-colors duration-300 hover:border-[#7fa5ff]/40"
-          >
-            {/* category and reading time only exist on the stand-in content —
-                a live WordPress post simply renders the date on its own */}
-            <div className="flex items-center gap-2.5 text-[12px] text-white/45">
-              {post.category && (
-                <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-[#a9c6ff]">
-                  {post.category}
-                </span>
-              )}
-              <span>{formatDate(post.date)}</span>
-            </div>
+      {posts.length === 0 ? (
+        <p className="mt-16 text-center text-slate-400">No posts published yet.</p>
+      ) : (
+        <div className="mt-12 grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-6">
+          {posts.map((post) => {
+            const category = primaryCategory(post);
+            const time = post.readingTime || readingTime(post.content?.rendered);
 
-            <h2 className="mt-4 text-lg font-semibold leading-snug text-white">
-              {post.title.rendered}
-            </h2>
+            return (
+              <article
+                key={post.id}
+                className="cs-glass flex flex-col rounded-2xl p-6 transition-colors duration-300 hover:border-[#7fa5ff]/40"
+              >
+                <div className="flex items-center gap-2.5 text-[12px] text-white/45">
+                  {category && (
+                    <span className="rounded-full bg-white/10 px-2.5 py-0.5 font-semibold uppercase tracking-wider text-[#a9c6ff]">
+                      {category}
+                    </span>
+                  )}
+                  <span>{formatDate(post.date)}</span>
+                </div>
 
-            <div
-              className="prose prose-invert prose-sm mt-2.5 max-w-none prose-p:text-white/65"
-              dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
-            />
+                <h2 className="mt-4 text-lg font-semibold leading-snug text-white">
+                  {decode(post.title.rendered)}
+                </h2>
 
-            <div className="mt-6 flex-1" />
+                <div
+                  className="prose prose-invert prose-sm mt-2.5 max-w-none prose-p:text-white/65 prose-a:text-[#a9c6ff]"
+                  dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }}
+                />
 
-            {post.readingTime && (
-              <span className="text-[12.5px] text-white/45">{post.readingTime}</span>
-            )}
-          </article>
-        ))}
-      </div>
+                <div className="mt-6 flex-1" />
+
+                {time && <span className="text-[12.5px] text-white/45">{time}</span>}
+              </article>
+            );
+          })}
+        </div>
+      )}
     </main>
   );
 }

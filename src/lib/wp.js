@@ -1,6 +1,7 @@
 import { JOBS, POSTS, SERVICE_CATEGORIES, SERVICES } from './dummy';
 
-const API = process.env.NEXT_PUBLIC_WP_API_URL;
+/* trailing slash trimmed so `${API}${path}` never produces a double slash */
+const API = process.env.NEXT_PUBLIC_WP_API_URL?.replace(/\/+$/, '');
 
 /* No API configured — which is the case for any deployment, since the
    WordPress instance currently only exists on localhost — so the site builds
