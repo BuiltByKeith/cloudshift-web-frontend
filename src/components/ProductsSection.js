@@ -37,9 +37,8 @@ const PRODUCTS = [
 function ProductCard({ product }) {
   return (
     <li
-      className={`cs-product-card flex flex-col rounded-[1.75rem] p-6 sm:p-7 ${
-        product.featured ? 'cs-product-card-featured' : ''
-      }`}
+      className={`cs-product-card flex flex-col rounded-[1.75rem] p-6 sm:p-7 ${product.featured ? 'cs-product-card-featured' : ''
+        }`}
     >
       {/* Media stack, contained by the card: the landing-page screenshot is the
           backdrop, the laptop render sits centred in front of it. */}
@@ -71,7 +70,7 @@ function ProductCard({ product }) {
         </div>
       </div>
 
-      <div className="flex items-center gap-2.5">
+      <div className="flex items-center gap-2.5 py-1.5">
         <p className="text-[12px] font-semibold uppercase tracking-[0.18em] text-white/45">
           {product.tagline}
         </p>
